@@ -26,6 +26,7 @@
 #include "NstCpu.hpp"
 #include "NstPpu.hpp"
 #include "NstState.hpp"
+#include <stdlib.h>
 
 namespace Nes
 {
@@ -1344,6 +1345,138 @@ namespace Nes
 			oam.address = (oam.address + 4) & 0xFF;
 		}
 
+		void Ppu::DrawInputDisplay(uint buttons, uint fc) 
+		{
+			int start = 55298; //index of top left pixel
+			int w = 38;
+			int h = 13;
+			DrawRectangle(start, 0, 0, w, h, 0x10);
+			for (int i = 0; i < 13; i++) {
+				DrawPixel(start, i, 0, 0x1D);
+			}
+
+			for (int i = 0; i < h - 1; i++) {
+				DrawPixel(start, 0, i, (cpu.sessionID >> i) % 2 ? (cpu.isClean ? 0x01 : 0x06) : 0x1D);
+			}
+
+			for (int i = 0; i < w - 1; i++) {
+				DrawPixel(start, i, h - 1, 0x1D);
+			}
+
+			for (int i = 6; i < h; i++) {
+				DrawPixel(start, w - 1, i, 0x1D);
+			}
+			DrawRectangle(start, 5, 5, 3, 3, 0x1D);
+			if (buttons & 0x80 && buttons & 0x40) {
+				buttons -= 0xC0;
+			}
+			int buttonColor = buttons&0x80 ? 0x20 : 0x1D; //right
+			DrawRectangle(start, 8, 5, 3, 3, buttonColor);
+			buttonColor = buttons&0x40 ? 0x20 : 0x1D; //left
+			DrawRectangle(start, 2, 5, 3, 3, buttonColor);
+			if (buttons & 0x20 && buttons & 0x10) {
+				buttons -= 0x30;
+			}
+			buttonColor = buttons&0x20 ? 0x20 : 0x1D; //down
+			DrawRectangle(start, 5, 8, 3, 3, buttonColor);
+			buttonColor = buttons&0x10 ? 0x20 : 0x1D; //up
+			DrawRectangle(start, 5, 2, 3, 3, buttonColor);
+			buttonColor = buttons&0x08 ? 0x20 : 0x1D; //start
+			DrawRectangle(start, 20, 8, 4, 2, buttonColor);
+			buttonColor = buttons&0x04 ? 0x20 : 0x1D; //select
+			DrawRectangle(start, 15, 8, 4, 2, buttonColor);
+			buttonColor = buttons&0x02 ? 0x20 : 0x1D; //B
+			DrawRectangle(start, 28, 6, 2, 4, buttonColor);
+			DrawRectangle(start, 27, 7, 4, 2, buttonColor);
+			buttonColor = buttons&0x01 ? 0x20 : 0x1D; //A
+			DrawRectangle(start, 33, 6, 2, 4, buttonColor);
+			DrawRectangle(start, 32, 7, 4, 2, buttonColor);
+
+			DrawNumber(start, fc % 10, 34);
+			DrawNumber(start, fc / 10 % 10, 29);
+			DrawNumber(start, fc / 100 % 10, 24);
+			DrawNumber(start, fc / 1000 % 10, 19);
+			DrawNumber(start, fc / 10000 % 10, 14);
+		}
+
+		void Ppu::DrawPixel(int start, int x, int y, int color) 
+		{
+			output.pixels[start + x + y * 256] = color;
+		}
+
+		void Ppu::DrawRectangle(int start, int x, int y, int w, int h, int color) {
+			for (int i = x; i < w + x; i++) {
+				for (int j = y; j < h + y; j++) {
+					DrawPixel(start, i, j, color);
+				}
+			}
+		}
+
+		void Ppu::DrawNumber(int start, int n, int x)
+		{
+
+	int numColor = 0x1D;
+	// if(_emu->GetConsole()->GetControlManager()->IsLagFrame()) {
+	// 	numColor = 0x00BB1111;
+	// }
+	DrawRectangle(start, x, 0, 4, 5, numColor);
+	int bgColor = 0x10;
+	switch(n) {
+		case 0:
+			DrawRectangle(start, x + 1, 1, 2, 3, bgColor);
+			break;
+
+		case 1:
+			DrawRectangle(start, x, 0, 1, 5, bgColor);
+			DrawRectangle(start, x + 1, 1, 1, 3, bgColor);
+			DrawRectangle(start, x + 3, 0, 1, 4, bgColor);
+			break;
+
+		case 2:
+			DrawRectangle(start, x,1, 3, 1, bgColor);
+			DrawRectangle(start, x + 1, 3, 3, 1, bgColor);
+			break;
+
+		case 3:
+			DrawRectangle(start, x, 1, 3, 1, bgColor);
+			DrawRectangle(start, x, 3, 3, 1, bgColor);
+			break;
+
+		case 4:
+			DrawRectangle(start, x, 3, 3, 2, bgColor);
+			DrawRectangle(start, x + 1, 0, 2, 2, bgColor);
+			break;
+
+		case 5:
+			DrawRectangle(start, x + 1, 1, 3, 1, bgColor);
+			DrawRectangle(start, x, 3, 3, 1, bgColor);
+			break;
+
+		case 6:
+			DrawRectangle(start, x + 1, 1, 3, 1, bgColor);
+			DrawRectangle(start, x + 1, 3, 2, 1, bgColor);
+			break;
+
+		case 7:
+			DrawRectangle(start, x, 2, 1, 3, bgColor);
+			DrawRectangle(start, x + 1, 1, 2, 4, bgColor);
+			break;
+
+		case 8:
+			DrawRectangle(start, x + 1, 3, 2, 1, bgColor);
+			DrawRectangle(start, x + 1, 1, 2, 1, bgColor);
+			break;
+
+		case 9:
+			DrawRectangle(start, x, 3, 3, 2, bgColor);
+			DrawRectangle(start, x + 1, 1, 2, 1, bgColor);
+			break;
+
+		default:
+			break;
+	}
+		}
+
 		NST_FORCE_INLINE uint Ppu::OpenSprite() const
 		{
 			return (regs.ctrl[0] & (Regs::CTRL0_SP_OFFSET|Regs::CTRL0_SP8X16)) ? 0x1FF0 : 0x0FF0;
@@ -1449,7 +1582,6 @@ namespace Nes
 					break;
 				}
 			}
-
 			Video::Screen::Pixel* const NST_RESTRICT target = output.target++;
 			*target = output.palette[pixel];
 		}

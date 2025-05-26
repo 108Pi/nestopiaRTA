@@ -523,6 +523,8 @@ namespace Nes
 				ppu.EndFrame();
 
 				renderer.bgColor = ppu.output.bgColor;
+				
+				ppu.DrawInputDisplay(input->pad->buttons, frame);
 
 				if (video)
 					renderer.Blit( *video, ppu.GetScreen(), ppu.GetBurstPhase() );

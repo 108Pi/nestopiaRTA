@@ -34,6 +34,7 @@
 #include "NstHook.hpp"
 #include "NstMemory.hpp"
 #include "NstVideoScreen.hpp"
+#include "input/NstInpDevice.hpp"
 
 #ifdef NST_PRAGMA_ONCE
 #pragma once
@@ -201,6 +202,7 @@ namespace Nes
 			void EvaluateSpritesPhase7();
 			void EvaluateSpritesPhase8();
 			void EvaluateSpritesPhase9();
+			
 
 			void Reset(bool,bool,bool);
 			void Update(Cycle,uint=0);
@@ -549,6 +551,11 @@ namespace Nes
 			{
 				return oam.spriteLimit;
 			}
+			
+			void DrawInputDisplay(uint buttons, uint frame);
+			void DrawPixel(int start, int x, int y, int color);
+			void DrawRectangle(int start, int x, int y, int w, int h, int color);
+			void DrawNumber(int start, int n, int x);
 		};
 	}
 }

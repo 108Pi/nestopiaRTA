@@ -45,6 +45,9 @@ namespace Nes
 
 			Cpu();
 
+			uint sessionID;
+			bool isClean;
+
 			enum
 			{
 				CYCLE_MAX = Cycle(~0UL),

@@ -156,6 +156,8 @@ namespace Nes
 		{
 			cycles.UpdateTable( GetModel() );
 			Reset( false, false );
+			sessionID = rand();
+			isClean = true;
 		}
 
 		#if NST_MSVC >= 1200
@@ -179,6 +181,8 @@ namespace Nes
 
 		void Cpu::Reset(const bool on,const bool hard)
 		{
+			sessionID = rand();
+			isClean = true;
 			if (!on || hard)
 			{
 				ram.Reset( GetModel() );
@@ -384,6 +388,9 @@ namespace Nes
 
 		void Cpu::LoadState(State::Loader& state,const dword cpuChunk,const dword apuChunk,const dword baseChunk)
 		{
+			sessionID = rand();
+			isClean = false;
+
 			if (baseChunk == cpuChunk)
 			{
 				CpuModel stateModel = GetModel();
