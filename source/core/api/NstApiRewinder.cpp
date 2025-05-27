@@ -41,7 +41,6 @@ namespace Nes
 		{
 			try
 			{
-				emulator.cpu.isClean = false;
 				return emulator.tracker.EnableRewinder( enable ? &emulator : NULL );
 			}
 			catch (Result result)

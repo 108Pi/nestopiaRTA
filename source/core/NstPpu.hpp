@@ -34,7 +34,6 @@
 #include "NstHook.hpp"
 #include "NstMemory.hpp"
 #include "NstVideoScreen.hpp"
-#include "input/NstInpDevice.hpp"
 
 #ifdef NST_PRAGMA_ONCE
 #pragma once
