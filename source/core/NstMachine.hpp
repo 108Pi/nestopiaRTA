@@ -31,6 +31,7 @@
 #include "NstPpu.hpp"
 #include "NstTracker.hpp"
 #include "NstVideoRenderer.hpp"
+#include "NstRunTimer.hpp"
 
 #ifdef NST_PRAGMA_ONCE
 #pragma once
@@ -123,7 +124,9 @@ namespace Nes
 
 			uint state;
 			dword frame;
-
+			double time;
+			bool timerRunning;
+			
 		public:
 			Cpu cpu;
 			Input::Adapter* extPort;
@@ -135,6 +138,7 @@ namespace Nes
 			Tracker tracker;
 			Ppu ppu;
 			Video::Renderer renderer;
+			RunTimer runTimer;
 
 			uint Is(uint a) const
 			{

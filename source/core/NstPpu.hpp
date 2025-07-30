@@ -555,6 +555,7 @@ namespace Nes
 			void DrawPixel(int start, int x, int y, int color);
 			void DrawRectangle(int start, int x, int y, int w, int h, int color);
 			void DrawNumber(int start, int n, int x);
+			void DrawTimer(int frameCount, bool isNTSC);
 		};
 	}
 }

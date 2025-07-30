@@ -53,7 +53,8 @@ namespace Nes
 		cheats        (NULL),
 		homebrew      (NULL),
 		imageDatabase (NULL),
-		ppu           (cpu)
+		ppu           (cpu),
+		runTimer	  (&cpu)
 		{
 		}
 
@@ -253,6 +254,7 @@ namespace Nes
 
 				state &= ~uint(Api::Machine::ON);
 				frame = 0;
+				runTimer.Reset();
 
 				Api::Machine::eventCallback( Api::Machine::EVENT_POWER_OFF, result );
 			}
@@ -268,6 +270,7 @@ namespace Nes
 			try
 			{
 				frame = 0;
+				runTimer.Reset();
 				cpu.Reset( hard );
 
 				if (!(state & Api::Machine::SOUND))
@@ -525,6 +528,10 @@ namespace Nes
 				renderer.bgColor = ppu.output.bgColor;
 				
 				ppu.DrawInputDisplay(input->pad ? input->pad->buttons : 0, frame);
+				if (runTimer.IsValid()) {
+					ppu.DrawTimer(runTimer.GetTime(), true);
+					runTimer.UpdateTimer(); //state & Api::Machine::NTSC == REGION_NTSC
+				}
 
 				if (video)
 					renderer.Blit( *video, ppu.GetScreen(), ppu.GetBurstPhase() );
@@ -538,6 +545,7 @@ namespace Nes
 				expPort->EndFrame();
 
 				frame++;
+				
 			}
 			else
 			{

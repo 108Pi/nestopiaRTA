@@ -42,7 +42,6 @@ namespace Nes
 				std::memset( ram, 0, SIZE );
 				file.Load( File::TURBOFILE, ram, SIZE );
 			}
-
 			TurboFile::~TurboFile()
 			{
 				file.Save( File::TURBOFILE, ram, SIZE );
