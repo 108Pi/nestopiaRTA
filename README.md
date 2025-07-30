@@ -56,3 +56,30 @@ To build the win32 solution with Visual Studio 2010:
 2. Manually zip NstDatabase.xml to the destination source/core/database/NstDatabase.zip
 3. Open projects/nestopia.sln
 4. Build in release mode
+
+## Timer Info
+The built in timer can be customized through timer.txt  
+This is done with sets of conditions, and if none of the conditions are false, it sets the timer to the indicated state  
+The included timer.txt has example conditions for Super Mario Bros.   
+
+### Condition types
+start - sets the timer to start running  
+stop - stops the timer from running. It may be started again if a start condition is met  
+reset - resets the timer to the start frame (0 by default) and stops it  
+end - stops the timer from running. It cannot be started again without resetting  
+vpause - visually pauses the timer for 60 frames. After, it will continue to run as if it hadn't been stopped  
+
+### Conditions
+Each condition is an address, a comparison operator, and a value  
+Possible comparison operators are =, <, >, and !=  
+
+### Syntax 
+```
+<type> { <condition>* }
+<condition> => <number> <operator> <number>
+```
+Whitespace isn't needed and is ignored  
+Numbers can be prefaced with 0x to signify hex  
+
+### Delay
+The starting point of the timer can be changed with ```delay <number>```
