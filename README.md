@@ -61,6 +61,7 @@ To build the win32 solution with Visual Studio 2010:
 The built in timer can be customized through timer.txt  
 This is done with sets of conditions, and if none of the conditions are false, it sets the timer to the indicated state  
 The included timer.txt has example conditions for Super Mario Bros.   
+Note the emulator must be closed and reopened for changes in timer.txt to take effect
 
 ### Condition types
 start - sets the timer to start running  
