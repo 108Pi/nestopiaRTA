@@ -529,8 +529,8 @@ namespace Nes
 				
 				ppu.DrawInputDisplay(input->pad ? input->pad->buttons : 0, frame);
 				if (runTimer.IsValid()) {
-					ppu.DrawTimer(runTimer.GetTime(), true);
-					runTimer.UpdateTimer(); //state & Api::Machine::NTSC == REGION_NTSC
+					ppu.DrawTimer(runTimer.GetTime(), state & Api::Machine::NTSC);
+					runTimer.UpdateTimer();
 				}
 
 				if (video)

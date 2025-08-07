@@ -12,6 +12,7 @@ namespace Nes
 			_cpu = cpu;
 			timerState = 0;
 			vpauseTime = 0;
+			pauseDelay = 60;
 			isValid = Init();
 		}
 
@@ -28,6 +29,17 @@ namespace Nes
 				if (isspace(ch)) {
 					continue;
 				}
+				if (ch == '/') {
+					if (!file.get(ch)) {
+						return false;
+					}
+					if (ch != '/') {
+						return false;
+					}
+					std::string comment;
+					getline(file, comment);
+					continue;
+				}
 				if (ch == '{') {
 					Token t = { 1, '{' };
 					tokens.push_back(t);
@@ -38,13 +50,24 @@ namespace Nes
 				}
 				else if (ch == '>') {
 					Token t = { 3, '>' };
+					if (file.peek() == '=') {
+						t.value = ']';
+						file.get(ch);
+					}
 					tokens.push_back(t);
 				}
 				else if (ch == '<') {
 					Token t = { 3, '<' };
+					if (file.peek() == '=') {
+						t.value = '[';
+						file.get(ch);
+					}
 					tokens.push_back(t);
 				}
 				else if (ch == '=') {
+					if (file.peek() == '=') {
+						file.get(ch);
+					}
 					Token t = { 3, '=' };
 					tokens.push_back(t);
 				}
@@ -91,7 +114,19 @@ namespace Nes
 						Token t = { 5,'d' }; 
 						tokens.push_back(t);
 					}
-					else {
+					else if (word == "advance") {
+						Token t = { 5, 'a' };
+						tokens.push_back(t);
+					}
+					else if (word == "pausetime") {
+						Token t = { 6,'p' };
+						tokens.push_back(t);
+					}
+					else if (word == "let") {
+						Token t = { 7,'l' };
+						tokens.push_back(t);
+					}
+					else if (std::isdigit(word[0])) {
 						int base = 10;
 						if (word.size() > 2 && word[0] == '0' && (word[1] == 'x' || word[1] == 'X')) {
 							base = 16;
@@ -112,18 +147,70 @@ namespace Nes
 							return false;
 						}
 					}
+					else {
+						int hash = 5381;
+						for (int i = 0; i < word.size(); ++i) {
+							hash = ((hash << 5) + hash) + word[i];
+						}
+						Token t = { 8, hash };
+						tokens.push_back(t);
+					}
 				}
 				else {
 					return false;
 				}
 			}
+			if (tokens.size() == 0) {
+				return false;
+			}
 			for (int i = 0; i < tokens.size(); ++i) {
+				if (tokens[i].type == 7) {
+					i++;
+					if (tokens[i].type != 8) {
+						return false;
+					}
+					int hash = tokens[i].value;
+					++i;
+					if (tokens[i].value != '=') {
+						return false;
+					}
+					i++;
+					if (tokens[i].type != 4) {
+						return false;
+					}
+					varMap[hash] = tokens[i].value;
+				}
+				if (tokens[i].type == 8) {
+					if (varMap.count(tokens[i].value) == 0) {
+						return false;
+					}
+					tokens[i].type = 4;
+					tokens[i].value = varMap[(tokens[i].value)];
+				}
+			}
+			for (int i = 0; i < tokens.size(); ++i) {
+				if (tokens[i].type == 7) {
+					i += 3;
+					continue;
+				}
 				if (tokens[i].type == 5) {
+					char savedValue = tokens[i].value;
 					++i;
 					if (tokens[i].type != 4) {
 						return false;
 					}
-					startFrame = tokens[i].value * -1;
+					startFrame = tokens[i].value;
+					if (savedValue == 'd') {
+						startFrame *= -1;
+					}
+					continue;
+				}
+				if (tokens[i].type == 6) {
+					++i;
+					if (tokens[i].type != 4) {
+						return false;
+					}
+					pauseDelay = tokens[i].value;
 					continue;
 				}
 				if (tokens[i].type != 0) {
@@ -194,7 +281,7 @@ namespace Nes
 				}
 				else if (CheckConditions(vpauseConds)) {
 					timerState = 2;
-					vpauseTime = 60;
+					vpauseTime = pauseDelay;
 				}
 			}
 			else if (timerState == 0) //stopped
@@ -207,15 +294,15 @@ namespace Nes
 			{
 				if (CheckConditions(stopConds)) {
 					timerState = 0;
-					frameCount += 61 - vpauseTime;
+					frameCount += pauseDelay + 1 - vpauseTime;
 				}
 				else if (CheckConditions(endConds)) {
 					timerState = -1;
-					frameCount += 61 - vpauseTime;
+					frameCount += pauseDelay + 1 - vpauseTime;
 				}
 				else if (vpauseTime == 0) {
 					timerState = 1;
-					frameCount += 61;
+					frameCount += pauseDelay + 1;
 				}
 				else {
 					vpauseTime--;
@@ -261,6 +348,18 @@ namespace Nes
 					}
 					else if (cond.comparison == '>') {
 						if (ramValue <= cond.value) {
+							passes = false;
+							break;
+						}
+					}
+					else if (cond.comparison == '[') {
+						if (ramValue > cond.value) {
+							passes = false;
+							break;
+						}
+					}
+					else if (cond.comparison == ']') {
+						if (ramValue < cond.value) {
 							passes = false;
 							break;
 						}
