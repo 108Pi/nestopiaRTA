@@ -63,24 +63,33 @@ This is done with sets of conditions, and if none of the conditions are false, i
 The included timer.txt has example conditions for Super Mario Bros.   
 Note the emulator must be closed and reopened for changes in timer.txt to take effect
 
-### Condition types
+### Condition Types
 start - sets the timer to start running  
 stop - stops the timer from running. It may be started again if a start condition is met  
 reset - resets the timer to the start frame (0 by default) and stops it  
 end - stops the timer from running. It cannot be started again without resetting  
-vpause - visually pauses the timer for 60 frames. After, it will continue to run as if it hadn't been stopped  
+vpause - visually pauses the timer for some number of frames (60 by default). After, it will continue to run as if it hadn't been stopped  
 
 ### Conditions
 Each condition is an address, a comparison operator, and a value  
-Possible comparison operators are =, <, >, and !=  
+Possible comparison operators are = or ==, <, >, <=, >=, and !=  
 
 ### Syntax 
+Whitespace isn't needed and is ignored  
+Numbers can be prefaced with 0x to signify hex  
+//This is a comment
+
+The syntax for lists of conditions is
 ```
 <type> { <condition>* }
 <condition> => <number> <operator> <number>
 ```
-Whitespace isn't needed and is ignored  
-Numbers can be prefaced with 0x to signify hex  
+### Timer Settings
+```delay <number>``` can be used to set a negative starting point  
+```advance <number>``` can be used for a positive starting point  
+```pausetime <number>``` changes the number of frames vpause stops the timer for
 
-### Delay
-The starting point of the timer can be changed with ```delay <number>```
+### Variables 
+Numbers can be assiged to variables with ```let <var name> = <number>```   
+Variables can be used in place of numbers in conditions or settings  
+Variables must be alphanumberic and cannot start with a digit
