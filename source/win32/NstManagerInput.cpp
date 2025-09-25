@@ -918,10 +918,17 @@ namespace Nestopia
 
 			if (input.autoFire)
 			{
-				keys[ Settings::PAD_KEY_AUTOFIRE_A ].GetState( buttons, Pad::A );
-				keys[ Settings::PAD_KEY_AUTOFIRE_B ].GetState( buttons, Pad::B );
+				uint turboButtons = 0;
+				keys[Settings::PAD_KEY_AUTOFIRE_A].GetState(turboButtons, Pad::A);
+				keys[Settings::PAD_KEY_AUTOFIRE_B].GetState(turboButtons, Pad::B);
+				buttons |= turboButtons;
+				buttons |= turboButtons << 8;
+			}
+			else {
+				buttons &= 255;
 			}
 
+			buttons |= pad.allowSimulAxes << 10;
 			pad.buttons = buttons;
 
 			buttons = 0;

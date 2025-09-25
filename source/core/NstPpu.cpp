@@ -1362,30 +1362,36 @@ namespace Nes
 				DrawPixel(start, w - 1, i, 0x1D);
 			}
 			DrawRectangle(start, 5, 5, 3, 3, 0x1D);
-			if (buttons & 0x80 && buttons & 0x40)
+			int pressedColor = 0x20;
+			uint isTurbo = buttons >> 8;
+			bool allowLRUD = buttons >> 10;
+			if (buttons & 0x80 && buttons & 0x40 && !allowLRUD) //l+r sodc
 			{
-				buttons -= 0xC0;
+				pressedColor = 0x00;
 			}
-			int buttonColor = buttons & 0x80 ? 0x20 : 0x1D; // right
+			int buttonColor = buttons & 0x80 ? pressedColor : 0x1D; // right
 			DrawRectangle(start, 8, 5, 3, 3, buttonColor);
-			buttonColor = buttons & 0x40 ? 0x20 : 0x1D; // left
+			buttonColor = buttons & 0x40 ? pressedColor : 0x1D; // left
 			DrawRectangle(start, 2, 5, 3, 3, buttonColor);
-			if (buttons & 0x20 && buttons & 0x10)
+			if (buttons & 0x20 && buttons & 0x10 && !allowLRUD) //u+d sodc
 			{
-				buttons -= 0x30;
+				pressedColor = 0x00;
 			}
-			buttonColor = buttons & 0x20 ? 0x20 : 0x1D; // down
+			else {
+				pressedColor = 0x20;
+			}
+			buttonColor = buttons & 0x20 ? pressedColor : 0x1D; // down
 			DrawRectangle(start, 5, 8, 3, 3, buttonColor);
-			buttonColor = buttons & 0x10 ? 0x20 : 0x1D; // up
+			buttonColor = buttons & 0x10 ? pressedColor : 0x1D; // up
 			DrawRectangle(start, 5, 2, 3, 3, buttonColor);
 			buttonColor = buttons & 0x08 ? 0x20 : 0x1D; // start
 			DrawRectangle(start, 20, 8, 4, 2, buttonColor);
 			buttonColor = buttons & 0x04 ? 0x20 : 0x1D; // select
 			DrawRectangle(start, 15, 8, 4, 2, buttonColor);
-			buttonColor = buttons & 0x02 ? 0x20 : 0x1D; // B
+			buttonColor = buttons & 0x02 ? isTurbo & 2 ? 0x3C : 0x20 : 0x1D; // B
 			DrawRectangle(start, 28, 6, 2, 4, buttonColor);
 			DrawRectangle(start, 27, 7, 4, 2, buttonColor);
-			buttonColor = buttons & 0x01 ? 0x20 : 0x1D; // A
+			buttonColor = buttons & 0x01 ? isTurbo & 1 ? 0x3C : 0x20 : 0x1D; // A  we love nested inline ifs 
 			DrawRectangle(start, 33, 6, 2, 4, buttonColor);
 			DrawRectangle(start, 32, 7, 4, 2, buttonColor);
 

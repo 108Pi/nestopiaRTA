@@ -524,9 +524,8 @@ namespace Nes
 
 				cpu.ExecuteFrame( sound );
 				ppu.EndFrame();
-
-				renderer.bgColor = ppu.output.bgColor;
 				
+				renderer.bgColor = ppu.output.bgColor;
 				ppu.DrawInputDisplay(input->pad ? input->pad->buttons : 0, frame);
 				if (runTimer.IsValid()) {
 					ppu.DrawTimer(runTimer.GetTime(), state & Api::Machine::NTSC);
