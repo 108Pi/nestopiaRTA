@@ -35,6 +35,8 @@
 #include "NstMemory.hpp"
 #include "NstVideoScreen.hpp"
 
+#include "../fltkui/jg/jg.h"
+
 #ifdef NST_PRAGMA_ONCE
 #pragma once
 #endif
@@ -201,7 +203,7 @@ namespace Nes
 			void EvaluateSpritesPhase7();
 			void EvaluateSpritesPhase8();
 			void EvaluateSpritesPhase9();
-			
+
 
 			void Reset(bool,bool,bool);
 			void Update(Cycle,uint=0);
@@ -550,7 +552,7 @@ namespace Nes
 			{
 				return oam.spriteLimit;
 			}
-			
+
 			void DrawInputDisplay(uint buttons, uint frame);
 			void DrawPixel(int start, int x, int y, int color);
 			void DrawRectangle(int start, int x, int y, int w, int h, int color);

@@ -1338,7 +1338,8 @@ namespace Nes
 
 		void Ppu::DrawInputDisplay(uint buttons, uint fc)
 		{
-			int start = 55298; // index of top left pixel
+			jg_videoinfo_t *vidinfo = jg_get_videoinfo();
+			int start = (vidinfo->w * (vidinfo->h - 15) + 2); // index of top left pixel
 			int w = 38;
 			int h = 13;
 			DrawRectangle(start, 0, 0, w, h, 0x10);
