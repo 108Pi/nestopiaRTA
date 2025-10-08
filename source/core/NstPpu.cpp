@@ -1338,8 +1338,13 @@ namespace Nes
 
 		void Ppu::DrawInputDisplay(uint buttons, uint fc)
 		{
+			// Index of top left pixel (from which we draw input display)
+#ifndef NST_WIN32
 			jg_videoinfo_t *vidinfo = jg_get_videoinfo();
-			int start = (vidinfo->w * (vidinfo->h - 15) + 2); // index of top left pixel
+			int start = (vidinfo->w * (vidinfo->h - 15) + 2);
+#else
+			int start = 55298;
+#endif
 			int w = 38;
 			int h = 13;
 			DrawRectangle(start, 0, 0, w, h, 0x10);
@@ -1392,7 +1397,7 @@ namespace Nes
 			buttonColor = buttons & 0x02 ? isTurbo & 2 ? 0x3C : 0x20 : 0x1D; // B
 			DrawRectangle(start, 28, 6, 2, 4, buttonColor);
 			DrawRectangle(start, 27, 7, 4, 2, buttonColor);
-			buttonColor = buttons & 0x01 ? isTurbo & 1 ? 0x3C : 0x20 : 0x1D; // A  we love nested inline ifs 
+			buttonColor = buttons & 0x01 ? isTurbo & 1 ? 0x3C : 0x20 : 0x1D; // A  we love nested inline ifs
 			DrawRectangle(start, 33, 6, 2, 4, buttonColor);
 			DrawRectangle(start, 32, 7, 4, 2, buttonColor);
 

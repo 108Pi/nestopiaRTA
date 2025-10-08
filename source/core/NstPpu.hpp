@@ -35,7 +35,9 @@
 #include "NstMemory.hpp"
 #include "NstVideoScreen.hpp"
 
+#ifndef NST_WIN32
 #include "../fltkui/jg/jg.h"
+#endif
 
 #ifdef NST_PRAGMA_ONCE
 #pragma once
