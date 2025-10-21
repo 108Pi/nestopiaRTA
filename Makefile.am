@@ -191,6 +191,7 @@ nestopia_SOURCES = \
 	source/core/NstTracker.hpp \
 	source/core/NstRam.cpp \
 	source/core/NstTimer.hpp \
+	source/core/NstRunTimer.cpp \
 	source/core/NstState.cpp \
 	source/core/api/NstApiEmulator.hpp \
 	source/core/api/NstApiVideo.cpp \
