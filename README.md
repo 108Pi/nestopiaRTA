@@ -93,3 +93,17 @@ The syntax for lists of conditions is
 Numbers can be assiged to variables with ```let <var name> = <number>```   
 Variables can be used in place of numbers in conditions or settings  
 Variables must be alphanumberic and cannot start with a digit
+
+### Display Colors 
+The color of the display can be customized with ```colors {<color>*}```  
+There can be up to 6 colors listed, which in order corospond to:  
+* Number color
+* Unpressed button/outline color
+* Pressed button color
+* Background color
+* SOCD color
+* Negative number color
+
+Each color value is an NES palette index  
+For example, the default colors would be defined with ```colors {0x1D 0x20 0x1D 0x10 0x00 0x16}```  
+Note: The pressed and unpressed colors cannot be the same, and the number color cannot match the background color

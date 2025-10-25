@@ -34,6 +34,8 @@
 #include "NstHook.hpp"
 #include "NstMemory.hpp"
 #include "NstVideoScreen.hpp"
+#include <vector>
+#include <algorithm>
 
 #ifndef NST_WIN32
 #include "../fltkui/jg/jg.h"
@@ -113,7 +115,7 @@ namespace Nes
 			protected:
 
 				Io::Accessor accessors[4];
-
+				
 			public:
 
 				void ResetAccessors();
@@ -418,7 +420,7 @@ namespace Nes
 				Cycle timestamp[8];
 				Cycle rd2007;
 			}   decay;
-
+			
 			Io io;
 			Regs regs;
 			Scroll scroll;
@@ -442,6 +444,7 @@ namespace Nes
 			Video::Screen screen;
 
 			static const byte yuvMaps[4][0x40];
+			byte displayColors[6];
 
 		public:
 
@@ -556,10 +559,11 @@ namespace Nes
 			}
 
 			void DrawInputDisplay(uint buttons, uint frame);
-			void DrawPixel(int start, int x, int y, int color);
-			void DrawRectangle(int start, int x, int y, int w, int h, int color);
+			void DrawPixel(int start, int x, int y, byte color);
+			void DrawRectangle(int start, int x, int y, int w, int h, byte color);
 			void DrawNumber(int start, int n, int x);
 			void DrawTimer(int frameCount, bool isNTSC);
+			void InitDisplayColors(std::vector<byte> colors);
 		};
 	}
 }

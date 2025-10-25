@@ -40,6 +40,7 @@ namespace Nes
             const bool IsValid();
             void UpdateTimer();
             void Reset();
+            std::vector<byte> getColors();
 
         private:
             int frameCount;
@@ -55,6 +56,7 @@ namespace Nes
             std::vector<std::vector<TimerCondition>> resetConds;
             std::vector<std::vector<TimerCondition>> endConds;
             std::map<int, int> varMap;
+            std::vector<byte> colors;
             bool Init();
             bool CheckConditions(std::vector<std::vector<TimerCondition>> & conds);
         };

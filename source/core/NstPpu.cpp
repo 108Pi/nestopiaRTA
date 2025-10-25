@@ -1345,59 +1345,68 @@ namespace Nes
 #else
 			int start = 55298;
 #endif
+			byte unpressedColor = displayColors[0]; //1D
+			byte pressedColor = displayColors[1]; //20
+			//byte textColor = displayColors[2]; //1D
+			byte bgColor = displayColors[3]; //10
+			byte socdColor = displayColors[4]; //00
+			//int negativeColor = displayColors[5]; //16
+
 			int w = 38;
 			int h = 13;
-			DrawRectangle(start, 0, 0, w, h, 0x10);
+			DrawRectangle(start, 0, 0, w, h, bgColor);
 			for (int i = 0; i < 13; i++)
 			{
-				DrawPixel(start, i, 0, 0x1D);
+				DrawPixel(start, i, 0, unpressedColor);
 			}
 
 			for (int i = 0; i < h - 1; i++)
 			{
-				DrawPixel(start, 0, i, (cpu.sessionID >> i) % 2 ? (cpu.isClean ? 0x01 : 0x06) : 0x1D);
+				DrawPixel(start, 0, i, (cpu.sessionID >> i) % 2 ? (cpu.isClean ? 0x01 : 0x06) : unpressedColor);
 			}
 
 			for (int i = 0; i < w - 1; i++)
 			{
-				DrawPixel(start, i, h - 1, 0x1D);
+				DrawPixel(start, i, h - 1, unpressedColor);
 			}
 
 			for (int i = 6; i < h; i++)
 			{
-				DrawPixel(start, w - 1, i, 0x1D);
+				DrawPixel(start, w - 1, i, unpressedColor);
 			}
-			DrawRectangle(start, 5, 5, 3, 3, 0x1D);
-			int pressedColor = 0x20;
+			DrawRectangle(start, 5, 5, 3, 3, unpressedColor);
+
 			uint isTurbo = buttons >> 8;
 			bool allowLRUD = buttons >> 10;
-			if (buttons & 0x80 && buttons & 0x40 && !allowLRUD) //l+r sodc
+			if (buttons & 0x80 && buttons & 0x40 && !allowLRUD) //l+r socd
 			{
-				pressedColor = 0x00;
+				pressedColor = socdColor;
 			}
-			int buttonColor = buttons & 0x80 ? pressedColor : 0x1D; // right
+			int buttonColor = buttons & 0x80 ? pressedColor : unpressedColor; // right
 			DrawRectangle(start, 8, 5, 3, 3, buttonColor);
-			buttonColor = buttons & 0x40 ? pressedColor : 0x1D; // left
+			buttonColor = buttons & 0x40 ? pressedColor : unpressedColor; // left
 			DrawRectangle(start, 2, 5, 3, 3, buttonColor);
-			if (buttons & 0x20 && buttons & 0x10 && !allowLRUD) //u+d sodc
+			if (buttons & 0x20 && buttons & 0x10 && !allowLRUD) //u+d socd
 			{
-				pressedColor = 0x00;
+				pressedColor = socdColor;
 			}
 			else {
-				pressedColor = 0x20;
+				pressedColor = displayColors[1];
 			}
-			buttonColor = buttons & 0x20 ? pressedColor : 0x1D; // down
+
+			buttonColor = buttons & 0x20 ? pressedColor : unpressedColor; // down
 			DrawRectangle(start, 5, 8, 3, 3, buttonColor);
-			buttonColor = buttons & 0x10 ? pressedColor : 0x1D; // up
+			buttonColor = buttons & 0x10 ? pressedColor : unpressedColor; // up
 			DrawRectangle(start, 5, 2, 3, 3, buttonColor);
-			buttonColor = buttons & 0x08 ? 0x20 : 0x1D; // start
+			pressedColor = displayColors[1];
+			buttonColor = buttons & 0x08 ? pressedColor : unpressedColor; // start
 			DrawRectangle(start, 20, 8, 4, 2, buttonColor);
-			buttonColor = buttons & 0x04 ? 0x20 : 0x1D; // select
+			buttonColor = buttons & 0x04 ? pressedColor : unpressedColor; // select
 			DrawRectangle(start, 15, 8, 4, 2, buttonColor);
-			buttonColor = buttons & 0x02 ? isTurbo & 2 ? 0x3C : 0x20 : 0x1D; // B
+			buttonColor = buttons & 0x02 ? isTurbo & 2 ? 0x1C : pressedColor : unpressedColor; // B
 			DrawRectangle(start, 28, 6, 2, 4, buttonColor);
 			DrawRectangle(start, 27, 7, 4, 2, buttonColor);
-			buttonColor = buttons & 0x01 ? isTurbo & 1 ? 0x3C : 0x20 : 0x1D; // A  we love nested inline ifs
+			buttonColor = buttons & 0x01 ? isTurbo & 1 ? 0x1C : pressedColor : unpressedColor; // A  we love nested inline ifs
 			DrawRectangle(start, 33, 6, 2, 4, buttonColor);
 			DrawRectangle(start, 32, 7, 4, 2, buttonColor);
 
@@ -1408,12 +1417,12 @@ namespace Nes
 			DrawNumber(start, fc / 10000 % 10, 14);
 		}
 
-		void Ppu::DrawPixel(int start, int x, int y, int color)
+		void Ppu::DrawPixel(int start, int x, int y, byte color)
 		{
 			output.pixels[start + x + y * 256] = color;
 		}
 
-		void Ppu::DrawRectangle(int start, int x, int y, int w, int h, int color)
+		void Ppu::DrawRectangle(int start, int x, int y, int w, int h, byte color)
 		{
 			for (int i = x; i < w + x; i++)
 			{
@@ -1426,13 +1435,13 @@ namespace Nes
 
 		void Ppu::DrawNumber(int start, int n, int x)
 		{
-			int numColor = 0x1D;
+			int numColor = displayColors[2]; //text color
 			if (n < 0) {
-				numColor = 0x16;
+				numColor = displayColors[5]; //negative color
 				n *= -1;
 			}
 			DrawRectangle(start, x, 0, 4, 5, numColor);
-			int bgColor = 0x10;
+			int bgColor = displayColors[3];
 			switch (n)
 			{
 			case 0:
@@ -1493,8 +1502,11 @@ namespace Nes
 		void Ppu::DrawTimer(int frameCount, bool isNTSC) {
 			double time = frameCount * (isNTSC ? 655171.0 / 39375000 : 6448.0 / 322445);
 			int start = 56361; // index of top left pixel
-			DrawRectangle(start, 0, 0, 42, 9, 0x1D);
-			DrawRectangle(start, 1, 1, 40, 7, 0x10);
+			byte outlineColor = displayColors[0]; //1D
+			byte bgColor = displayColors[3]; //10
+
+			DrawRectangle(start, 0, 0, 42, 9, outlineColor);
+			DrawRectangle(start, 1, 1, 40, 7, bgColor);
 			int mins = (int)time / 60;
 			double secs = time - mins * 60;
 			secs = floor(secs * 1000.0 + 0.5) / 1000.0;
@@ -1502,14 +1514,36 @@ namespace Nes
 			start += 512;
 			DrawNumber(start, mins % 10, 7);
 			DrawNumber(start, mins / 10 % 10, 2);
-			DrawPixel(start, 12, 1, 0x1D);
-			DrawPixel(start, 12, 3, 0x1D);
+			DrawPixel(start, 12, 1, outlineColor);
+			DrawPixel(start, 12, 3, outlineColor);
 			DrawNumber(start, int(secs) % 10, 19);
 			DrawNumber(start, int(secs) / 10 % 10, 14);
-			DrawPixel(start, 24, 4, 0x1D);
+			DrawPixel(start, 24, 4, outlineColor);
 			DrawNumber(start, int(secs * 10) % 10, 26);
 			DrawNumber(start, int(secs * 100) % 10, 31);
 			DrawNumber(start, int(secs * 1000) % 10, 36);
+		}
+
+		void Ppu::InitDisplayColors(std::vector<byte> colors) {
+			byte defaultColors[6] = { 0x1D,0x20,0x1D,0x10,0x00,0x16 }; 
+			int count = std::min(colors.size(), (size_t)6);
+			std::copy_n(colors.begin(), count, displayColors);
+			for (int i = count; i < 6; ++i) {
+				displayColors[i] = defaultColors[i];
+			}
+			bool hasDuplicates = false;
+			if (displayColors[0] == displayColors[1]) {
+				hasDuplicates = true;
+			}
+			if (displayColors[2] == displayColors[3]) {
+				hasDuplicates = true;
+			}
+			if (hasDuplicates) {
+				for (int i = 0; i < 6; ++i) {
+					displayColors[i] = defaultColors[i];
+				}
+				return;
+			}
 		}
 
 		NST_FORCE_INLINE uint Ppu::OpenSprite() const

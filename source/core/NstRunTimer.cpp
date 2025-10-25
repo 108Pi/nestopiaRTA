@@ -126,6 +126,10 @@ namespace Nes
 						Token t = { 7,'l' };
 						tokens.push_back(t);
 					}
+					else if (word == "colors") {
+						Token t = { 9,'c' }; 
+						tokens.push_back(t);
+					}
 					else if (std::isdigit(word[0])) {
 						int base = 10;
 						if (word.size() > 2 && word[0] == '0' && (word[1] == 'x' || word[1] == 'X')) {
@@ -211,6 +215,21 @@ namespace Nes
 						return false;
 					}
 					pauseDelay = tokens[i].value;
+					continue;
+				}
+				if (tokens[i].type == 9) {
+					++i;
+					if (tokens[i].type != 1) {
+						return false;
+					}
+					++i;
+					while (tokens[i].type != 2) {
+						if (tokens[i].type != 4) {
+							return false;
+						}
+						colors.push_back(tokens[i].value);
+						++i;
+					}
 					continue;
 				}
 				if (tokens[i].type != 0) {
@@ -324,6 +343,10 @@ namespace Nes
 		{
 			frameCount = startFrame;
 			timerState = 0;
+		}
+
+		std::vector<byte> RunTimer::getColors() {
+			return colors;
 		}
 
 		bool RunTimer::CheckConditions(std::vector<std::vector<TimerCondition>>& conds)

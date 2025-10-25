@@ -254,7 +254,7 @@ namespace Nes
 
 				state &= ~uint(Api::Machine::ON);
 				frame = 0;
-				runTimer.Reset();
+				//runTimer.Reset();
 
 				Api::Machine::eventCallback( Api::Machine::EVENT_POWER_OFF, result );
 			}
@@ -270,7 +270,13 @@ namespace Nes
 			try
 			{
 				frame = 0;
-				runTimer.Reset();
+				if (hard) {
+					runTimer = *(new RunTimer(&cpu));
+					ppu.InitDisplayColors(runTimer.getColors());
+				}
+				else {
+					runTimer.Reset();
+				}
 				cpu.Reset( hard );
 
 				if (!(state & Api::Machine::SOUND))
