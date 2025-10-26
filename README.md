@@ -97,9 +97,9 @@ Variables must be alphanumberic and cannot start with a digit
 ### Display Colors 
 The color of the display can be customized with ```colors {<color>*}```  
 There can be up to 6 colors listed, which in order corospond to:  
-* Number color
 * Unpressed button/outline color
 * Pressed button color
+* Number color
 * Background color
 * SOCD color
 * Negative number color
