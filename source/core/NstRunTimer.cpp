@@ -10,10 +10,11 @@ namespace Nes
 		RunTimer::RunTimer(Cpu* cpu)
 		{
 			_cpu = cpu;
-			timerState = 0;
 			vpauseTime = 0;
+			startFrame = 0;
 			pauseDelay = 60;
 			isValid = Init();
+			Reset();
 		}
 
 		bool RunTimer::Init()

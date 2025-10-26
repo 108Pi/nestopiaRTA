@@ -37,9 +37,9 @@
 #include <vector>
 #include <algorithm>
 
-#ifndef NST_WIN32
-#include "../fltkui/jg/jg.h"
-#endif
+//#ifndef NST_WIN32
+//#include "../fltkui/jg/jg.h"
+//#endif
 
 #ifdef NST_PRAGMA_ONCE
 #pragma once

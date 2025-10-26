@@ -1339,12 +1339,12 @@ namespace Nes
 		void Ppu::DrawInputDisplay(uint buttons, uint fc)
 		{
 			// Index of top left pixel (from which we draw input display)
-#ifndef NST_WIN32
-			jg_videoinfo_t *vidinfo = jg_get_videoinfo();
-			int start = (vidinfo->w * (vidinfo->h - 15) + 2);
-#else
+//#ifndef NST_WIN32
+//			jg_videoinfo_t *vidinfo = jg_get_videoinfo();
+//			int start = (vidinfo->w * (vidinfo->h - 15) + 2);
+//#else
 			int start = 55298;
-#endif
+//#endif
 			byte unpressedColor = displayColors[0]; //1D
 			byte pressedColor = displayColors[1]; //20
 			//byte textColor = displayColors[2]; //1D
@@ -1503,6 +1503,7 @@ namespace Nes
 			double time = frameCount * (isNTSC ? 655171.0 / 39375000 : 6448.0 / 322445);
 			int start = 56361; // index of top left pixel
 			byte outlineColor = displayColors[0]; //1D
+			byte textColor = displayColors[2]; //1D
 			byte bgColor = displayColors[3]; //10
 
 			DrawRectangle(start, 0, 0, 42, 9, outlineColor);
@@ -1514,11 +1515,11 @@ namespace Nes
 			start += 512;
 			DrawNumber(start, mins % 10, 7);
 			DrawNumber(start, mins / 10 % 10, 2);
-			DrawPixel(start, 12, 1, outlineColor);
-			DrawPixel(start, 12, 3, outlineColor);
+			DrawPixel(start, 12, 1, textColor);
+			DrawPixel(start, 12, 3, textColor);
 			DrawNumber(start, int(secs) % 10, 19);
 			DrawNumber(start, int(secs) / 10 % 10, 14);
-			DrawPixel(start, 24, 4, outlineColor);
+			DrawPixel(start, 24, 4, textColor);
 			DrawNumber(start, int(secs * 10) % 10, 26);
 			DrawNumber(start, int(secs * 100) % 10, 31);
 			DrawNumber(start, int(secs * 1000) % 10, 36);
