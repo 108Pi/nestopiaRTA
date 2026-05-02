@@ -510,12 +510,12 @@ namespace Nestopia
 					{
 						switch (i)
 						{
-							case DIK_CAPITAL:
-							case DIK_NUMLOCK:
-							case DIK_SCROLL:
-							case DIK_KANA:
-							case DIK_KANJI:
-								continue;
+							//case DIK_CAPITAL:
+							//case DIK_NUMLOCK:
+							//case DIK_SCROLL:
+							//case DIK_KANA:
+							//case DIK_KANJI:
+							//	continue;
 
 							default:
 								return Map( key, i ) ? SCAN_GOOD_KEY : SCAN_INVALID_KEY;
